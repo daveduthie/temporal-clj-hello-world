@@ -1,4 +1,5 @@
-(ns daveduthie.temporal.money-transfer
+(ns daveduthie.temporal.workflow
+  (:require [daveduthie.temporal.activity])
   (:import daveduthie.temporal.activity.AccountActivity
            io.temporal.activity.ActivityOptions
            io.temporal.common.RetryOptions
@@ -12,7 +13,7 @@
 ;; TODO(daveduthie): Not sure how to specify @WorkflowMethod on transfer
 (definterface ^{WorkflowInterface true} MoneyTransferWorkflow
   (^{WorkflowMethod true}
-   transfer [^String fromAccountId, ^String toAccountId, ^String referenceId, ^double amount]))
+   transfer [^String fromAccountId, ^String toAccountId, ^String referenceId, ^Double amount]))
 
 (deftype MoneyTransferWorkflowImpl []
   MoneyTransferWorkflow
@@ -29,4 +30,4 @@
                                build)
           account (Workflow/newActivityStub AccountActivity activity-options)]
       (.withdraw account fromAccountId referenceId amount)
-      (.deposit toAccountId referenceId amount))))
+      (.deposit account toAccountId referenceId amount))))

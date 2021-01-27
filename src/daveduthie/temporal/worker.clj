@@ -1,6 +1,8 @@
 (ns daveduthie.temporal.worker
+  (:require [daveduthie.temporal.activity]
+            [daveduthie.temporal.workflow])
   (:import daveduthie.temporal.activity.AccountActivityImpl
-           daveduthie.temporal.money_transfer.MoneyTransferWorkflowImpl
+           daveduthie.temporal.workflow.MoneyTransferWorkflowImpl
            io.temporal.client.WorkflowClient
            io.temporal.serviceclient.WorkflowServiceStubs
            io.temporal.worker.WorkerFactory))
@@ -12,7 +14,7 @@
         factory (WorkerFactory/newInstance client)
         worker  (.newWorker factory "MONEY_TRANSFER_TASK_QUEUE")]
     (.registerWorkflowImplementationTypes worker (into-array Class [MoneyTransferWorkflowImpl]))
-    (.registerActivitiesImplementations worker (into-array (AccountActivityImpl.)))
+    (.registerActivitiesImplementations worker (into-array [(AccountActivityImpl.)]))
     (.start factory)))
 
 (comment

@@ -5,18 +5,19 @@
 ;; Activity
 
 (definterface ^{ActivityInterface true} AccountActivity
-  (deposit [account-id reference-id amount])
-  (withdraw [account-id reference-id amount]))
+  (deposit [tx-details])
+  (withdraw [tx-details]))
 
 (comment
   (seq (.getAnnotations AccountActivity)))
 
 (deftype AccountActivityImpl []
   AccountActivity
-  (deposit [_this account-id reference-id amount]
-    {:deposit [account-id reference-id amount]})
-  (withdraw [_this account-id reference-id amount]
-    {:withdraw [ account-id reference-id amount]}))
+  (deposit [_this tx-details]
+    {:deposit tx-details})
+  (withdraw [_this tx-details]
+    {:withdraw tx-details}))
 
-  (comment
-    (.withdraw (->AccountActivityImpl) "x" "y" 123.45))
+(comment
+  (.withdraw (->AccountActivityImpl)
+             {:from "x", :to "y", :ref-id "1234", :amt 123.45}))

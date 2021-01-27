@@ -1,41 +1,32 @@
 (ns daveduthie.temporal.initiate-transfer
-  (:require [daveduthie.temporal.workflow])
+  (:require [daveduthie.temporal.common :as common])
   (:import daveduthie.temporal.workflow.MoneyTransferWorkflow
            [io.temporal.client WorkflowClient WorkflowOptions]
            io.temporal.serviceclient.WorkflowServiceStubs
-           io.temporal.workflow.Functions$Func4
-           java.util.UUID))
+           io.temporal.workflow.Functions$Func1))
 
 ;; -----------------------------------------------------------------------------
 ;; Initiate workflow
 
-(defn random-uuid []
-  (str (UUID/randomUUID)))
-
-(defn runit
+(defn new-client
   []
-  (let [service      (WorkflowServiceStubs/newInstance)
-        options      (.. (WorkflowOptions/newBuilder)
-                         (setTaskQueue "MONEY_TRANSFER_TASK_QUEUE")
-                         (setWorkflowId (random-uuid))
-                         build)
-        client       (WorkflowClient/newInstance service)
-        workflow     (.newWorkflowStub client MoneyTransferWorkflow options)
-        reference-id (random-uuid)
-        from-account "001-001"
-        to-account   "002-002"
-        amount       180.74
-        we           (WorkflowClient/start
-                      (reify
-                       Functions$Func4
-                         (apply [this from to reference amt]
-                           (.transfer workflow from to reference amt)))
-                      from-account
-                      to-account
-                      reference-id
-                      amount)]
-    {:wf-id (.getWorkflowId we) :run-id (.getRunId we)}))
+  (WorkflowClient/newInstance (WorkflowServiceStubs/newInstance)))
 
-(comment
-  (runit)
-  )
+(defn new-workflow
+  [typ]
+  (let [client  (new-client)
+        options (.. (WorkflowOptions/newBuilder)
+                    (setTaskQueue common/TASK_QUEUE)
+                    (setWorkflowId (common/random-uuid))
+                    build)]
+    (.newWorkflowStub client typ options)))
+
+(defn initiate-transfer!
+  [tx-details]
+  (let [workflow (new-workflow MoneyTransferWorkflow)
+        wex      (WorkflowClient/start (reify
+                                        Functions$Func1
+                                          (apply [this tx-details]
+                                            (.transfer workflow tx-details)))
+                                       tx-details)]
+    {:wf-id (.getWorkflowId wex), :run-id (.getRunId wex)}))

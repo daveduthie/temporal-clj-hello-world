@@ -1,7 +1,6 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
-        io.temporal/temporal-sdk {:mvn/version "1.0.4"}
-        }
+        io.temporal/temporal-sdk {:mvn/version "1.0.4"}}
  :aliases
  {:test {:extra-paths ["test"]
          :extra-deps {org.clojure/test.check {:mvn/version "1.0.0"}}}

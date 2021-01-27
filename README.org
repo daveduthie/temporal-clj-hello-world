@@ -1,0 +1,5 @@
+#+TITLE: Readme
+
+Start a temporal server. Refer to [[https://github.com/temporalio/docker-compose][the docs]].
+
+Then start a REPL, and run the expressions in the comment block in [[./src/daveduthie/temporal_clj.clj][temporal_clj.clj]].

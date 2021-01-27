@@ -1,12 +1,17 @@
 (ns daveduthie.temporal-clj
   (:require [daveduthie.temporal.worker :as worker]
-            [daveduthie.temporal.initiate-transfer :as initiate-transfer]
-            [daveduthie.temporal.common :as common])
+            [daveduthie.temporal.initiate-transfer :as initiate-transfer])
   (:gen-class))
 
 (defn -main
   "I don't do a whole lot ... yet."
-  [& args]
+  [& [from to ref-id amt]]
   (worker/start-worker!)
   (initiate-transfer/initiate-transfer!
-   {:from "001-001", :to "002-002", :ref-id (common/random-uuid), :amt 180.74}))
+   {:from from, :to to, :ref-id ref-id, :amt (Double/parseDouble amt)})
+  (System/exit 0))
+
+(comment
+  (worker/start-worker!)
+  (initiate-transfer/initiate-transfer!
+   {:from "me", :to "you", :ref-id "2bfcecae-8bfd-4703-8fcc-e4b8b868ac08", :amt 12345.56}))

@@ -14,9 +14,10 @@
 (deftype AccountActivityImpl []
   AccountActivity
   (deposit [_this tx-details]
-    {:deposit tx-details})
-  (withdraw [_this tx-details]
-    {:withdraw tx-details}))
+    (if (rand-nth (conj (repeat 20 false) true))
+      {:deposit tx-details}
+      (throw (ex-info "Simulate network failure" {:many/details "here"}))))
+  (withdraw [_this tx-details] {:withdraw tx-details}))
 
 (comment
   (.withdraw (->AccountActivityImpl)

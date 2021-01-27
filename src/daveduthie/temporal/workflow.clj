@@ -16,9 +16,10 @@
   MoneyTransferWorkflow
   (transfer [_this tx-details]
     (let [retry-options (.. (RetryOptions/newBuilder)
-                            (setInitialInterval (Duration/ofSeconds 1))
-                            (setMaximumInterval (Duration/ofSeconds 100))
-                            (setBackoffCoefficient 2)
+                            ;; I set these really low because I'm impatient
+                            (setInitialInterval (Duration/ofMillis 10))
+                            (setMaximumInterval (Duration/ofMillis 200))
+                            (setBackoffCoefficient 1.1)
                             (setMaximumAttempts 500)
                             build)
           activity-options (.. (ActivityOptions/newBuilder)
